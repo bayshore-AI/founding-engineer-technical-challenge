@@ -2,7 +2,8 @@
 
 ## Overview
 
-Build a **policy document management MVP** that ingests PDF compliance documents, constructs a knowledge graph from their content, and provides a Graph-RAG chatbot for querying policies.
+Build a **policy document management MVP** that ingests PDF compliance documents, constructs a knowledge graph from their content, and provides a Graph-RAG chatbot for querying policies. There are no limits to your creativity, just build something useful. Think of it this way:
+Our customers want to see something and based on that decide if they are going to enter a commercial engangement with us. We only have two days to show them what they want.
 
 **Time limit:** 48 hours from when you start.
 
@@ -41,8 +42,6 @@ apps/web/           → Next.js 15 application (your main workspace)
 pkgs/ui/            → Shared UI components (shadcn/Radix)
 pkgs/domain/        → Shared Zod schemas and types
 pkgs/config-*/      → Shared TypeScript and ESLint configuration
-docs/               → Place the 10 challenge PDF documents here
-fixtures/           → Sample data for quick testing
 ```
 
 ---
@@ -73,7 +72,7 @@ fixtures/           → Sample data for quick testing
    - Answers must include citations to specific documents and sections
    - Use the Vercel AI SDK streaming pattern (scaffolded in `/api/chat`)
 
-### Stretch Goals
+### Ideas for Stretch Goals
 
 5. **Document Viewer** — browse uploaded documents with full content display
 6. **Related Documents Sidebar** — select a document, see graph-connected related docs
@@ -81,6 +80,7 @@ fixtures/           → Sample data for quick testing
 8. **Graph Search / Filtering** — filter graph by node type, document, or keyword
 9. **Persistence** — data survives server restart (SQLite, Postgres, file-based, etc.)
 10. **Tests** — unit or integration tests for key logic
+11. **Improved Citations** — user can click on citation and see exactly where the information from the document comes from
 
 ---
 
@@ -94,7 +94,7 @@ fixtures/           → Sample data for quick testing
 - **Validation:** Zod
 
 You are free to choose:
-- Graph storage (Neo4j, SQLite, in-memory, file-based, etc.)
+- Graph storage (Neo4j, Postgres, SQLite, in-memory, file-based, etc.)
 - PDF parsing library
 - Graph visualization library (react-force-graph, d3, cytoscape, vis-network, etc.)
 - Embedding/vector storage approach (if any)
@@ -115,18 +115,6 @@ This starter mirrors our internal codebase conventions. We evaluate whether you 
 - **TypeScript:** `strict: true`, `noUncheckedIndexedAccess: true`
 
 Look at the scaffolded code for examples of each pattern.
-
----
-
-## Evaluation Rubric
-
-| Criteria | Weight | What We Look For |
-|---|---|---|
-| **Functionality** | 40% | Does the graph get built? Does RAG actually use graph structure? Do citations work? |
-| **Code Quality** | 25% | Does the code follow the conventions in this starter? Is it clean and well-organized? |
-| **Architecture** | 20% | Sensible graph schema, good separation of concerns, appropriate abstractions |
-| **UX / Polish** | 10% | Usable interface, loading states, error handling in the UI |
-| **DECISIONS.md** | 5% | Clear reasoning about trade-offs and choices |
 
 ---
 
@@ -154,13 +142,12 @@ The following is scaffolded and working:
 - Logger utility matching our internal pattern
 - Home page with navigation cards
 
-**Your job:** Fill in the TODOs and build the actual intelligence.
-
+Note, that the scaffold is meant as a guidline, you can change things if you find it necessary and if you want to make it more beatiful ;D
 ---
 
 ## Provided Documents
 
-Place the 10 challenge PDF documents in the `docs/` directory. These are corporate compliance policy documents covering topics like gifts & entertainment, anti-corruption, antitrust, business conduct, and related supplementary documents.
+These are corporate compliance policy documents covering topics like gifts & entertainment, anti-corruption, antitrust, business conduct, and related supplementary documents. The documents reference each other somehow. The data is anonymized but very similar to real data.
 
 ---
 
@@ -169,5 +156,7 @@ Place the 10 challenge PDF documents in the `docs/` directory. These are corpora
 - Start with ingestion → graph → then RAG. Get the pipeline working end-to-end before polishing.
 - A simple but working graph (even keyword/section-based) is better than a sophisticated but broken one.
 - Graph-RAG means retrieval should traverse the graph, not just do vector similarity. Show us the graph adds value.
+- Your users are Compliance Officers and Legal Experts, they want explainability, control, and anything that adds trust - they are risk-averse. 
+- You are allowed to mock stuff, the users/customers are not technical and will probably not know.
 - We value clear thinking (DECISIONS.md) as much as clean code.
 - Don't over-engineer. 48 hours is tight — ship something that works.
