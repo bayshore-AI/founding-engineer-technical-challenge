@@ -53,8 +53,7 @@ pkgs/config-*/      → Shared TypeScript and ESLint configuration
 1. **PDF Ingestion**
    - Upload interface for PDF files
    - Parse PDFs and extract text content
-   - Chunk documents into meaningful sections (by heading, paragraph, or fixed window)
-   - Store chunks with stable, deterministic IDs
+   - Chunk documents in a meaningful way
 
 2. **Knowledge Graph Construction**
    - Extract entities and relationships from policy documents
@@ -69,7 +68,7 @@ pkgs/config-*/      → Shared TypeScript and ESLint configuration
 4. **Graph-RAG Chatbot**
    - Chat interface (scaffolded for you — see `apps/web/src/components/chat/`)
    - Retrieval must use graph structure, not just vector similarity
-   - Answers must include citations to specific documents and sections
+   - Answers must include citations
    - Use the Vercel AI SDK streaming pattern (scaffolded in `/api/chat`)
 
 ### Ideas for Stretch Goals
@@ -80,7 +79,8 @@ pkgs/config-*/      → Shared TypeScript and ESLint configuration
 8. **Graph Search / Filtering** — filter graph by node type, document, or keyword
 9. **Persistence** — data survives server restart (SQLite, Postgres, file-based, etc.)
 10. **Tests** — unit or integration tests for key logic
-11. **Improved Citations** — user can click on citation and see exactly where the information from the document comes from
+11. **Improved Citations** — click on citation to see exactly where the information comes from
+12. **Your Own Ideas** - what else could a user find helpful when working with large amout of legal and compliance documents?
 
 ---
 
@@ -104,17 +104,15 @@ You are free to choose:
 
 ## Coding Conventions
 
-This starter mirrors our internal codebase conventions. We evaluate whether you follow them:
+This starter mirrors our internal codebase conventions.
 
 - **Imports:** Use `import type` for type-only imports
 - **Validation:** Zod schemas with `.safeParse()` for request validation
 - **API routes:** Named exports (`GET`, `POST`), structured error responses
 - **Components:** `"use client"` directive, TypeScript interfaces for props, `cn()` for class merging
-- **Error handling:** Try-catch with structured logging via `logger()` from `@/lib/logger`
+- **Error handling:** result pattern with neverThrow
 - **Files:** PascalCase for components, camelCase for utilities, kebab-case for folders
 - **TypeScript:** `strict: true`, `noUncheckedIndexedAccess: true`
-
-Look at the scaffolded code for examples of each pattern.
 
 ---
 
@@ -143,6 +141,7 @@ The following is scaffolded and working:
 - Home page with navigation cards
 
 Note, that the scaffold is meant as a guidline, you can change things if you find it necessary and if you want to make it more beatiful ;D
+
 ---
 
 ## Provided Documents
