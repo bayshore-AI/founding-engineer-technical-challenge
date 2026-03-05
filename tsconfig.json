@@ -1,0 +1,10 @@
+{
+  "extends": "./pkgs/config-typescript/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@repo/*": ["pkgs/*/src"]
+    }
+  },
+  "exclude": ["node_modules", "apps", "pkgs"]
+}
