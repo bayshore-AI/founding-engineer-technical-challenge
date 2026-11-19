@@ -1,11 +1,16 @@
-# Policy Graph Explorer — Take-Home Challenge
+# Regulatory Change → Policy Impact — Take-Home Challenge
 
 ## Overview
 
-Build a **policy document management MVP** that ingests PDF compliance documents, constructs a knowledge graph from their content, and provides a Graph-RAG chatbot for querying policies. There are no limits to your creativity, just build something useful. Think of it this way:
-Our customers want to see something and based on that decide if they are going to enter a commercial engangement with us. We only have two days to show them what they want.
+Build a product that helps a compliance team handle regulatory change: a new regulation arrives,
+and the Compliance Officer needs to know whether it applies, which obligations it creates, which
+internal policies are affected, where the gaps are, and how the policies must change, with every
+step evidenced and decided by a human.
 
-**Time limit:** 48 hours from when you start.
+**Read [CHALLENGE.md](CHALLENGE.md) first.** It explains the bigger picture, the users, the
+assignment, the non-negotiables and the deliverables.
+
+**Time limit:** 2–3 days from when you start.
 
 ---
 
@@ -16,6 +21,7 @@ Our customers want to see something and based on that decide if they are going t
 - [Bun](https://bun.sh) v1.3+ (package manager and runtime)
 - Node.js 20+
 - An OpenAI API key (provided separately)
+- The company profile, GR-006 and the policy documents (provided separately by email)
 
 ### Setup
 
@@ -26,6 +32,9 @@ bun install
 # Copy environment config
 cp .env.example .env
 # → Add your OPENAI_API_KEY to .env
+# → FEED_AS_OF sets the simulated "today" for the regulatory feed
+
+# Put the documents you received by email into /policies
 
 # Start the dev server
 bun run dev
@@ -33,54 +42,38 @@ bun run dev
 # Open http://localhost:3000
 ```
 
+Other commands: `bun run build`, `bun run lint`, `bun run check-types`, `bun run test`.
+
 ### Project Structure
 
 This is a **Turborepo monorepo** with the following layout:
 
 ```
-apps/web/           → Next.js 15 application (your main workspace)
-pkgs/ui/            → Shared UI components (shadcn/Radix)
-pkgs/domain/        → Shared Zod schemas and types
-pkgs/config-*/      → Shared TypeScript and ESLint configuration
+apps/web/            → Next.js 15 application (your main workspace)
+pkgs/ui/             → Shared UI components (shadcn/Radix)
+pkgs/domain/         → Shared Zod schemas and types (feed items, GR-006 vocabulary)
+pkgs/config-*/       → Shared TypeScript and ESLint configuration
+regulatory-feed/     → The regulatory feed: one Markdown file per item (read its README)
+labels/sample.json   → Expected outcomes for 3 feed items
+policies/            → Put the documents you received by email here
 ```
 
 ---
 
-## Requirements
+## The Regulatory Feed
 
-### Must-Have (Core)
+`regulatory-feed/` stands in for a commercial horizon-scanning service. Each item is a Markdown
+file with a YAML header (source id, version, status, change type, dates, ...) and the source text.
+The date prefix of the file name is the day the item arrives.
 
-1. **PDF Ingestion**
-   - Upload interface for PDF files
-   - Parse PDFs and extract text content
-   - Chunk documents in a meaningful way
+- `FEED_AS_OF` in `.env` is the simulated "today". Only items dated on or before it have arrived.
+  Move it forward to simulate time passing; `2027-03-31` shows everything.
+- `apps/web/src/lib/feed` has a typed loader (`loadFeed`) with tests. Use it, change it, or replace
+  it.
+- Add your own items in the same format to test your product. At review we also run your app
+  against a feed you have not seen, so don't hard-code anything about the provided items.
 
-2. **Knowledge Graph Construction**
-   - Extract entities and relationships from policy documents
-   - Build a graph with typed nodes (e.g., `policy`, `concept`, `requirement`, `entity`) and typed edges (e.g., `references`, `requires`, `conflicts_with`)
-   - Graph must capture cross-document relationships
-
-3. **Graph Visualization**
-   - Interactive, browsable graph view
-   - Nodes and edges should be visually distinguishable by type
-   - Click a node to see its details and connections
-
-4. **Graph-RAG Chatbot**
-   - Chat interface (scaffolded for you — see `apps/web/src/components/chat/`)
-   - Retrieval must use graph structure, not just vector similarity
-   - Answers must include citations
-   - Use the Vercel AI SDK streaming pattern (scaffolded in `/api/chat`)
-
-### Ideas for Stretch Goals
-
-5. **Document Viewer** — browse uploaded documents with full content display
-6. **Related Documents Sidebar** — select a document, see graph-connected related docs
-7. **Paragraph Cross-References** — highlight a paragraph, see related content in other documents
-8. **Graph Search / Filtering** — filter graph by node type, document, or keyword
-9. **Persistence** — data survives server restart (SQLite, Postgres, file-based, etc.)
-10. **Tests** — unit or integration tests for key logic
-11. **Improved Citations** — click on citation to see exactly where the information comes from
-12. **Your Own Ideas** - what else could a user find helpful when working with large amout of legal and compliance documents?
+See [regulatory-feed/README.md](regulatory-feed/README.md) for the format.
 
 ---
 
@@ -89,15 +82,14 @@ pkgs/config-*/      → Shared TypeScript and ESLint configuration
 - **Package manager:** Bun (not npm/pnpm)
 - **Framework:** Next.js 15 with App Router
 - **Language:** TypeScript (strict mode is enabled)
-- **LLM:** OpenAI via `@ai-sdk/openai` (Vercel AI SDK)
+- **LLM:** OpenAI via `@ai-sdk/openai` (Vercel AI SDK), see `apps/web/src/lib/ai/openai.ts`
 - **Styling:** Tailwind CSS v4 + shadcn components from `@repo/ui`
 - **Validation:** Zod
 
 You are free to choose:
-- Graph storage (Neo4j, Postgres, SQLite, in-memory, file-based, etc.)
-- PDF parsing library
-- Graph visualization library (react-force-graph, d3, cytoscape, vis-network, etc.)
-- Embedding/vector storage approach (if any)
+- Storage (Postgres, SQLite, file-based, in-memory, etc.)
+- PDF parsing library and how you structure the policy library
+- Retrieval approach (embeddings, full text, structure-based, or a mix)
 - Any additional libraries you need
 
 ---
@@ -107,12 +99,31 @@ You are free to choose:
 This starter mirrors our internal codebase conventions.
 
 - **Imports:** Use `import type` for type-only imports
-- **Validation:** Zod schemas with `.safeParse()` for request validation
+- **Validation:** Zod schemas with `.safeParse()` for request validation and external input
 - **API routes:** Named exports (`GET`, `POST`), structured error responses
-- **Components:** `"use client"` directive, TypeScript interfaces for props, `cn()` for class merging
-- **Error handling:** result pattern with neverThrow
-- **Files:** PascalCase for components, camelCase for utilities, kebab-case for folders
+- **Components:** `"use client"` directive where needed, TypeScript interfaces for props, `cn()` for
+  class merging
+- **Error handling:** result pattern with neverthrow (see `apps/web/src/lib/feed/load-feed.ts`)
+- **Files:** PascalCase for component names, camelCase for utilities, kebab-case for files and folders
 - **TypeScript:** `strict: true`, `noUncheckedIndexedAccess: true`
+
+---
+
+## What's Already Built
+
+- Monorepo with Turbo, Bun workspaces, TypeScript strict config, ESLint
+- Next.js app with sidebar navigation: Regulatory feed, Change cases, Policy library
+- Feed loader (`loadFeed`) with Zod validation, neverthrow results, as-of filtering and `bun test` tests
+- Feed viewer: list of received items and a detail page per item with its clauses
+- `GET /api/feed?asOf=YYYY-MM-DD` returning the received items
+- Domain schemas: `FeedItem`, `Clause`, and the GR-006 vocabulary (`Applicability`,
+  `CoverageFinding`, `Priority`)
+- OpenAI provider for the Vercel AI SDK
+- shadcn components: Button, Input, Textarea, Card, ScrollArea, Badge, etc.
+- Logger utility matching our internal pattern
+
+The Change cases and Policy library pages are empty: that is where your product starts. The
+scaffold is a guideline; change anything you find necessary.
 
 ---
 
@@ -120,42 +131,20 @@ This starter mirrors our internal codebase conventions.
 
 1. Push your solution to a **private GitHub repository**
 2. Add `erikkrauter-lfg` as a collaborator
-3. Include a completed `DECISIONS.md` (template provided)
-4. (Optional) Deploy to Vercel/Railway/etc. and include the URL
-5. (Optional) Include a short Loom/screen recording demo
-
----
-
-## What's Already Built
-
-The following is scaffolded and working:
-
-- Monorepo with Turbo, Bun workspaces, TypeScript strict config, ESLint
-- Next.js app with sidebar navigation and page routing
-- Chat UI with `useChat` from `@ai-sdk/react` (wired to `/api/chat`)
-- Chat API route with `streamText` + `createUIMessageStream` (basic echo mode)
-- API stubs for `/api/ingest` and `/api/graph` with Zod validation patterns
-- shadcn components: Button, Input, Textarea, Card, ScrollArea, Badge, etc.
-- Domain schemas: `Document`, `Chunk`, `GraphNode`, `GraphEdge`, `Citation`
-- Logger utility matching our internal pattern
-- Home page with navigation cards
-
-Note, that the scaffold is meant as a guidline, you can change things if you find it necessary and if you want to make it more beatiful ;D
-
----
-
-## Provided Documents
-
-These are corporate compliance policy documents covering topics like gifts & entertainment, anti-corruption, antitrust, business conduct, and related supplementary documents. The documents reference each other somehow. The data is anonymized but very similar to real data.
+3. Include a completed `DECISIONS.md` and `NEXT.md` (templates provided)
+4. Include a short Loom/screen recording demo
+5. (Optional) Deploy to Vercel/Railway/etc. and include the URL
 
 ---
 
 ## Tips
 
-- Start with ingestion → graph → then RAG. Get the pipeline working end-to-end before polishing.
-- A simple but working graph (even keyword/section-based) is better than a sophisticated but broken one.
-- Graph-RAG means retrieval should traverse the graph, not just do vector similarity. Show us the graph adds value.
-- Your users are Compliance Officers and Legal Experts, they want explainability, control, and anything that adds trust - they are risk-averse. 
-- You are allowed to mock stuff, the users/customers are not technical and will probably not know.
+- Read GR-006 before you write code. It is the specification written by the customer.
+- Get one item working end to end (feed → case → findings → human decision → record) before you
+  go broad.
+- Your users are compliance officers and legal experts. They want explainability, control and
+  anything that adds trust; they are risk-averse.
+- Dates, applicability facts and priorities can often be computed. Not everything needs a model.
+- You are allowed to mock things. Say what you mocked in DECISIONS.md.
 - We value clear thinking (DECISIONS.md) as much as clean code.
-- Don't over-engineer. 48 hours is tight — ship something that works.
+- Don't over-engineer. Ship something that works.

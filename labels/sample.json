@@ -1,0 +1,134 @@
+{
+  "description": "Expected outcomes for 3 of the 12 feed items, so you can calibrate your pipeline and evals. We keep the labels for the other items and for a second, unseen feed that we run your app against at review. 'also_acceptable' lists findings we would not mark as wrong when the reasoning is sound.",
+  "as_of_note": "Priority is assessed on the publication date of the item, using the rules in GR-006 section 6.1.",
+  "items": [
+    {
+      "source_id": "ctry-a-whistleblower-protection-amendment",
+      "version": 1,
+      "applicability": "applicable",
+      "applicability_reason": "Country A = Germany. Lindenwerk is a group of about 25,000 employees with its headquarters, research and manufacturing in Germany, so the German employer is far above both thresholds: § 3 (50 employees) and § 4 (more than 1,000 employees).",
+      "priority_at_publication": "standard",
+      "priority_reason": "Applies from 2027-03-01, 42 days after publication; not within 30 days.",
+      "obligations": [
+        {
+          "source_clause": "§ 1",
+          "duty": "Give the whistleblower feedback on follow-up measures within two months of confirming receipt.",
+          "applicability": "applicable",
+          "finding": "conflicting",
+          "also_acceptable": [],
+          "policy_refs": [
+            {
+              "document": "GR-002",
+              "version": "2.0",
+              "section": "III.G Conclusion and remedial measures"
+            }
+          ],
+          "note": "GR-002 says the whistleblower is informed 'when possible within three months after reception of the report'. Three months contradicts two months."
+        },
+        {
+          "source_clause": "§ 2",
+          "duty": "Confirm receipt of a report within seven days at the latest.",
+          "applicability": "applicable",
+          "finding": "partial",
+          "also_acceptable": [
+            "covered"
+          ],
+          "policy_refs": [
+            {
+              "document": "GR-002",
+              "version": "2.0",
+              "section": "III.B Confirmation of receipt of the report"
+            }
+          ],
+          "note": "GR-002 sets seven days but qualifies it with 'to the extent possible'; the law makes it mandatory."
+        },
+        {
+          "source_clause": "§ 3",
+          "duty": "Internal reporting channels must accept anonymous reports and allow anonymous follow-up communication.",
+          "applicability": "applicable",
+          "finding": "covered",
+          "also_acceptable": [
+            "partial"
+          ],
+          "policy_refs": [
+            {
+              "document": "GR-002",
+              "version": "2.0",
+              "section": "II.B Anonymity"
+            },
+            {
+              "document": "GR-002",
+              "version": "2.0",
+              "section": "III.D Ongoing communication with whistleblowers"
+            }
+          ],
+          "note": "Covered by two sections together. Whether the portal really supports anonymous dialogue is an operational question (GR-006 5.3), not a policy gap."
+        },
+        {
+          "source_clause": "§ 4",
+          "duty": "Publish annual statistics on reports.",
+          "applicability": "applicable",
+          "finding": "missing",
+          "also_acceptable": [],
+          "policy_refs": [
+            {
+              "document": "GR-002",
+              "version": "2.0",
+              "section": "Appendix II. Documentation"
+            }
+          ],
+          "note": "GR-002 requires reports to be documented in the case management system, but nothing provides for publishing annual statistics. Propose an insertion and assign an owner."
+        }
+      ]
+    },
+    {
+      "source_id": "ctry-c-gifts-transparency-act",
+      "version": 1,
+      "applicability": "not_applicable",
+      "applicability_reason": "Lindenwerk has no entity, branch or employees in Country C, and the Act applies only to undertakings established or registered there. Reassess if the group sets up an entity or branch in Country C.",
+      "priority_at_publication": null,
+      "priority_reason": null,
+      "obligations": []
+    },
+    {
+      "source_id": "ctry-a-public-officials-circular",
+      "version": 1,
+      "applicability": "applicable",
+      "applicability_reason": "Country A guidance on the meaning of 'public official'. Lindenwerk's German entities deal with state-owned customers, public universities, permit and certification authorities. Guidance, not a new legal duty (GR-006 4.3), but it affects how employees apply GR-001.",
+      "priority_at_publication": "standard",
+      "priority_reason": "Guidance without an application date; no new duty applies within 30 days.",
+      "obligations": [
+        {
+          "source_clause": "2",
+          "duty": "Treat employees of state- or municipally controlled undertakings performing public tasks (e.g. municipal utilities) as public officials.",
+          "applicability": "applicable",
+          "finding": "covered",
+          "also_acceptable": [],
+          "policy_refs": [
+            {
+              "document": "SD-001",
+              "version": null,
+              "section": "II.3"
+            }
+          ],
+          "note": "SD-001 already lists municipal utilities and public transport. No amendment needed; keep the reference."
+        },
+        {
+          "source_clause": "3",
+          "duty": "Treat persons formally entrusted with public administrative tasks, including interns and temporary staff, as public officials.",
+          "applicability": "applicable",
+          "finding": "covered",
+          "also_acceptable": [],
+          "policy_refs": [
+            {
+              "document": "SD-001",
+              "version": null,
+              "section": "II.5"
+            }
+          ],
+          "note": "SD-001 II.5 names interns and apprentices explicitly."
+        }
+      ]
+    }
+  ]
+}

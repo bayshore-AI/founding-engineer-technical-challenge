@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, GitBranch, MessageSquare, Home } from "lucide-react";
+import { FolderOpen, Home, Inbox, Library } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/", icon: Home },
-  { label: "Documents", href: "/documents", icon: FileText },
-  { label: "Graph", href: "/graph", icon: GitBranch },
-  { label: "Chat", href: "/chat", icon: MessageSquare },
+  { label: "Regulatory feed", href: "/feed", icon: Inbox },
+  { label: "Change cases", href: "/cases", icon: FolderOpen },
+  { label: "Policy library", href: "/policies", icon: Library },
 ] as const;
 
 export function Sidebar() {
@@ -19,7 +19,7 @@ export function Sidebar() {
     <aside className="flex w-56 shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground">
       {/* Logo / title */}
       <div className="flex h-14 items-center border-b px-4">
-        <span className="text-sm font-semibold tracking-tight">Policy Explorer</span>
+        <span className="text-sm font-semibold tracking-tight">Regulatory Change</span>
       </div>
 
       {/* Navigation */}

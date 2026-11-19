@@ -1,77 +1,91 @@
 import { z } from "zod";
 
-// ─── Document ────────────────────────────────────────────────────────────────
+// ─── Regulatory feed ─────────────────────────────────────────────────────────
+// Shape of one item in /regulatory-feed (see regulatory-feed/README.md).
 
-export const DocumentSchema = z.object({
-  id: z.string(),
-  title: z.string(),
+/** ISO date (YYYY-MM-DD). YAML parses unquoted dates as Date objects, so accept both. */
+const IsoDateSchema = z.preprocess(
+  (value) => (value instanceof Date ? value.toISOString().slice(0, 10) : value),
+  z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected an ISO date (YYYY-MM-DD)"),
+);
+
+export const PublisherTypeSchema = z.enum(["official", "secondary"]);
+export type PublisherType = z.infer<typeof PublisherTypeSchema>;
+
+export const ChangeTypeSchema = z.enum([
+  "new",
+  "final_version",
+  "amendment",
+  "correction",
+  "withdrawal",
+]);
+export type ChangeType = z.infer<typeof ChangeTypeSchema>;
+
+export const SourceStatusSchema = z.enum(["draft", "final", "guidance", "withdrawn"]);
+export type SourceStatus = z.infer<typeof SourceStatusSchema>;
+
+/** Reference to one version of a source: `<source_id>@<version>`. */
+export const SourceRefSchema = z.string().regex(/^[a-z0-9-]+@\d+$/, "Expected <source_id>@<version>");
+export type SourceRef = z.infer<typeof SourceRefSchema>;
+
+export const FeedItemHeaderSchema = z.object({
+  source_id: z.string().regex(/^[a-z0-9-]+$/),
+  version: z.number().int().positive(),
+  title: z.string().min(1),
+  issuer: z.string().min(1),
+  jurisdiction: z.string().min(1),
+  publisher_type: PublisherTypeSchema,
+  /** Secondary items point to the official source they summarize. */
+  original_ref: SourceRefSchema.nullable(),
+  change_type: ChangeTypeSchema,
+  status: SourceStatusSchema,
+  published_at: IsoDateSchema,
+  /** null = not stated in the source. Keep unknown dates explicitly unknown (GR-006 4.2). */
+  entry_into_force: IsoDateSchema.nullable(),
+  application_date: IsoDateSchema.nullable(),
+  supersedes: SourceRefSchema.nullable(),
+});
+export type FeedItemHeader = z.infer<typeof FeedItemHeaderSchema>;
+
+export const ClauseSchema = z.object({
+  /** Clause label as written in the source, e.g. "§ 2" or "1" */
+  ref: z.string(),
+  /** Full heading line without the leading "## " */
+  heading: z.string(),
+  text: z.string(),
+});
+export type Clause = z.infer<typeof ClauseSchema>;
+
+export const FeedItemSchema = z.object({
+  /** `<source_id>@<version>` */
+  ref: SourceRefSchema,
   fileName: z.string(),
-  /** Total number of chunks extracted from this document */
-  chunkCount: z.number().int().nonneg(),
-  createdAt: z.string().datetime(),
+  /** Date the item reaches the company: the file name's date prefix */
+  receivedAt: IsoDateSchema,
+  header: FeedItemHeaderSchema,
+  /** Full Markdown body (without the header) */
+  body: z.string(),
+  clauses: z.array(ClauseSchema),
 });
+export type FeedItem = z.infer<typeof FeedItemSchema>;
 
-export type Document = z.infer<typeof DocumentSchema>;
+// ─── GR-006 vocabulary ───────────────────────────────────────────────────────
+// Outcome values defined by Lindenwerk's GR-006 "Regulatory change and policy management".
 
-// ─── Chunk ───────────────────────────────────────────────────────────────────
+/** GR-006 5.1 */
+export const ApplicabilitySchema = z.enum(["applicable", "not_applicable", "needs_clarification"]);
+export type Applicability = z.infer<typeof ApplicabilitySchema>;
 
-export const ChunkSchema = z.object({
-  id: z.string(),
-  documentId: z.string(),
-  /** Section or heading this chunk belongs to */
-  section: z.string().optional(),
-  /** The raw text content */
-  content: z.string(),
-  /** Position within the document (0-indexed) */
-  index: z.number().int().nonneg(),
-});
+/** GR-006 5.2 */
+export const CoverageFindingSchema = z.enum([
+  "covered",
+  "partial",
+  "conflicting",
+  "missing",
+  "uncertain",
+]);
+export type CoverageFinding = z.infer<typeof CoverageFindingSchema>;
 
-export type Chunk = z.infer<typeof ChunkSchema>;
-
-// ─── Graph ───────────────────────────────────────────────────────────────────
-
-export const GraphNodeSchema = z.object({
-  id: z.string(),
-  label: z.string(),
-  /** e.g. "policy", "concept", "entity", "requirement", "section" */
-  type: z.string(),
-  /** Source document IDs this node was extracted from */
-  documentIds: z.array(z.string()),
-  /** Arbitrary metadata the candidate may add */
-  metadata: z.record(z.unknown()).optional(),
-});
-
-export type GraphNode = z.infer<typeof GraphNodeSchema>;
-
-export const GraphEdgeSchema = z.object({
-  id: z.string(),
-  sourceId: z.string(),
-  targetId: z.string(),
-  /** e.g. "references", "requires", "conflicts_with", "related_to" */
-  relationship: z.string(),
-  /** Optional weight or confidence score */
-  weight: z.number().optional(),
-  metadata: z.record(z.unknown()).optional(),
-});
-
-export type GraphEdge = z.infer<typeof GraphEdgeSchema>;
-
-export const GraphSchema = z.object({
-  nodes: z.array(GraphNodeSchema),
-  edges: z.array(GraphEdgeSchema),
-});
-
-export type Graph = z.infer<typeof GraphSchema>;
-
-// ─── Chat ────────────────────────────────────────────────────────────────────
-
-export const CitationSchema = z.object({
-  documentId: z.string(),
-  documentTitle: z.string(),
-  section: z.string().optional(),
-  chunkId: z.string().optional(),
-  /** Snippet of the source text */
-  excerpt: z.string().optional(),
-});
-
-export type Citation = z.infer<typeof CitationSchema>;
+/** GR-006 6.1 */
+export const PrioritySchema = z.enum(["high", "standard"]);
+export type Priority = z.infer<typeof PrioritySchema>;

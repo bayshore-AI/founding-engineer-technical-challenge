@@ -5,8 +5,8 @@ import { Sidebar } from "@/components/layout/sidebar";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Policy Graph Explorer",
-  description: "Policy document management with graph-based RAG",
+  title: "Regulatory Change → Policy Impact",
+  description: "Regulatory change and policy management for Lindenwerk",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
