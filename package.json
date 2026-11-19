@@ -7,7 +7,7 @@
     "pkgs/*"
   ],
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "bun --env-file=.env turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
     "check-types": "turbo check-types",
