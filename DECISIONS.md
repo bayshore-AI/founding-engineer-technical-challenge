@@ -16,7 +16,7 @@
 
 ## Data Model
 
-**How do you represent feed items, cases, obligations, findings, policies and decisions?**
+**What did you model, and why?**
 
 <!-- What are the core entities? How do you handle versions, corrections and the history of decisions? -->
 
@@ -36,7 +36,7 @@
 
 **How do you know it works?**
 
-<!-- Tests, test items you added to the feed, comparison with labels/sample.json, known failure modes. -->
+<!-- How you checked it. Tests, items you added to the feed, known failure modes. -->
 
 ## Key Trade-offs
 

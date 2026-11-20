@@ -54,7 +54,6 @@ pkgs/ui/             → Shared UI components (shadcn/Radix)
 pkgs/domain/         → Shared Zod schemas and types (feed items, GR-006 vocabulary)
 pkgs/config-*/       → Shared TypeScript and ESLint configuration
 regulatory-feed/     → The regulatory feed: one Markdown file per item (read its README)
-labels/sample.json   → Expected outcomes for 3 feed items
 policies/            → Put the documents you received by email here
 ```
 

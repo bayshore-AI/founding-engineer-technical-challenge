@@ -105,7 +105,6 @@ whom, on what basis.
 | What | Where | What it holds |
 | --- | --- | --- |
 | Regulatory feed | [`regulatory-feed/`](regulatory-feed/README.md) | 12 fictional regulatory items as Markdown files, arriving between 5 January and 22 March 2027. Includes noise, a draft and its final version, a secondary source, and a correction. |
-| Sample labels | [`labels/sample.json`](labels/sample.json) | Expected outcomes for 3 feed items, so you can calibrate. We keep the labels for the others. |
 | Company profile, GR-006, policy library | By email → put them in [`policies/`](policies/README.md) | The facts about Lindenwerk, its regulatory change process, and 14 compliance documents (PDF). |
 | OpenAI API key | By email | For the models in your product. |
 | Starter app | This repo | Next.js + Bun + TypeScript monorepo with a typed feed loader and a feed viewer. See [README.md](README.md). |
